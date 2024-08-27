@@ -5,3 +5,6 @@ UserSettings
 Packages
 .vsconfig
 MasterGridPlacementInUnity.sln
+Assembly-CSharp.csproj
+obj
+.vs
