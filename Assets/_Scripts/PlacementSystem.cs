@@ -25,11 +25,11 @@ public class PlacementSystem : MonoBehaviour
 
     private void Start()
     {
-        StopPlacement();
+        //StopPlacement();
 
-        floorData = new GridData();
-        furnitureData = new GridData();
-        previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
+        //floorData = new ();
+        //furnitureData = new ();
+        //previewRenderer = cellIndicator.GetComponentInChildren<Renderer>();
     }
 
     public void StartPlacement(int ID)
@@ -97,16 +97,16 @@ public class PlacementSystem : MonoBehaviour
 
     private void Update()
     {
-        if (selectedObjectIndex < 0) return;
+        //if (selectedObjectIndex < 0) return;
 
         Vector3 mousePosition = inputManager.GetSelectedMapPosition();
-        Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+        //Vector3Int gridPosition = grid.WorldToCell(mousePosition);
 
-        bool placementValuduty = CheckPlacementValidity(gridPosition, selectedObjectIndex);
-        previewRenderer.material.color = placementValuduty ? Color.white : Color.red;
+        //bool placementValuduty = CheckPlacementValidity(gridPosition, selectedObjectIndex);
+        //previewRenderer.material.color = placementValuduty ? Color.white : Color.red;
 
         mouseIndicator.transform.position = mousePosition;
-        cellIndicator.transform.position = grid.CellToWorld(gridPosition);
+        //cellIndicator.transform.position = grid.CellToWorld(gridPosition);
     }
 
 }
