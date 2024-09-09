@@ -13,7 +13,6 @@ public class PlacementSystem : MonoBehaviour
 
     [SerializeField] GameObject gridVisualization;
 
-    // 바닥과 프랍 데이터 분리
     private GridData floorData, furnitureData;
 
     [SerializeField] private PreviewSystem preview;

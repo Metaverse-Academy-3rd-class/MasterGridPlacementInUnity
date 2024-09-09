@@ -12,7 +12,8 @@ public class GridData
     { 
         //포지션 계산
         List<Vector3Int> posisitonToOccupy = CalculatePositions(gridPosition, objectSize);
-        PlacementData data = new PlacementData(posisitonToOccupy, ID, placedObjectIndex);
+        //PlacementData data = new PlacementData(posisitonToOccupy, ID, placedObjectIndex);
+        
 
         foreach (var pos in posisitonToOccupy)
         {
@@ -22,7 +23,7 @@ public class GridData
                 throw new Exception("이미 포함되어 있습니다.");
             }
 
-            placedObjects[pos] = data; // 저장
+            //placedObjects[pos] = data; // 저장
         }
     }
 
@@ -80,6 +81,7 @@ public class GridData
     }
 }
 
+/*
 // 저장 데이터 객체
 public class PlacementData
 {
@@ -98,3 +100,5 @@ public class PlacementData
     }
 
 }
+*/
+
