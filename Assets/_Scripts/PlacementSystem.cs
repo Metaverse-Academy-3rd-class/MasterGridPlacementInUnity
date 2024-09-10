@@ -6,21 +6,21 @@ using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
-    [SerializeField] GameObject mouseIndicator, cellIndicator;
+    [SerializeField] GameObject mouseIndicator;
     [SerializeField] private InputManager inputManager;
     [SerializeField] Grid grid;
     [SerializeField] private GameObject gridVisualization;
 
     [SerializeField] private ObjectsDatabaseSO database;
-
+    [SerializeField] PreviewSystem preview;
 
     public PlacementDataDic furnitureData, floorData;
 
-    [SerializeField] private Renderer previewRenderer;
 
     public List<GameObject> placedGameobjects = new List<GameObject>();
 
     [SerializeField] private int selectedObjectIndex = -1;
+    [SerializeField] private Vector3Int lastDetectedPosition = Vector3Int.zero;
 
     [Header("마우스의 포지션")]
     [SerializeField] private Vector3 mousePosition;
@@ -36,8 +36,6 @@ public class PlacementSystem : MonoBehaviour
         StopPlacement();
         floorData = new PlacementDataDic();
         furnitureData = new PlacementDataDic();
-
-
     }
 
     // 배치 시작
@@ -55,8 +53,12 @@ public class PlacementSystem : MonoBehaviour
 
         // 그리드 이펙트를 켠다.
         gridVisualization.SetActive(true);
-        // 그리드 포지션 인디게이트를 켠다.
-        cellIndicator.SetActive(true);
+
+        // 프리뷰 그리기
+        preview.StartShowingPlacementPreview(
+                database.objectsData[selectedObjectIndex].Prefab,
+                database.objectsData[selectedObjectIndex].Size
+            );
 
         // 마우스 버튼 클릭후에
         inputManager.onClicked += Placestructure;
@@ -64,12 +66,12 @@ public class PlacementSystem : MonoBehaviour
     }
 
     // 배치 모드 끄기 
-    private void StopPlacement()
+    public void StopPlacement()
     {
         // 선택된 오브젝트가 
         selectedObjectIndex = -1;
         gridVisualization.SetActive(false);
-        cellIndicator.SetActive(false);
+        preview.StopShowingPreview();
 
         inputManager.onClicked -= Placestructure;
         inputManager.onExit -= StopPlacement;
@@ -77,6 +79,14 @@ public class PlacementSystem : MonoBehaviour
         //생성된 오브젝트의 포지션을 다시 제거함
         createObjectPosition = Vector3.zero;
     }
+
+    /*
+    public void SetObjectRotationment(int id)
+    {
+        StopPlacement();
+        StartPlacement(id);
+    }
+    */
 
 
     // 마우스 클릭후에 
@@ -136,6 +146,8 @@ public class PlacementSystem : MonoBehaviour
         // 지속적으로 저장하여 나중에 빨간색 프리뷰 이미지가 나올수 있도록
         // 충돌 처리 하기 위해 저장
         selectedData.AddObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size, database.objectsData[selectedObjectIndex].ID, placedGameobjects.Count - 1);
+
+        preview.UpdatePosition(grid.CellToWorld(gridPosition), false);
     }
 
 
@@ -143,10 +155,10 @@ public class PlacementSystem : MonoBehaviour
     {
         // 장판인지 오브젝트인지 구분
         PlacementDataDic selectData = database.objectsData[selectedObjectIndex].ID == 0? floorData : furnitureData;
-
-        //
         return selectData.CanPlaceObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size);
     }
+
+
 
     private void Update()
     {
@@ -159,9 +171,20 @@ public class PlacementSystem : MonoBehaviour
         // 마우스의 포지션으로 그리드 포지션 찾기
         gridPosition = grid.WorldToCell(mousePosition);
         
-        // 마우스 포지션 대입
-        mouseIndicator.transform.position = mousePosition;
-        cellIndicator.transform.position = grid.CellToWorld(gridPosition);
+        // 다른 셀로 이동했다며
+        if(lastDetectedPosition != gridPosition)
+        {
+            placementValidity = CheckPlacementValidity(gridPosition, selectedObjectIndex);
+
+            // 마우스 포지션 대입
+            mouseIndicator.transform.position = mousePosition;
+            preview.UpdatePosition(grid.CellToWorld(gridPosition), placementValidity);
+            lastDetectedPosition = gridPosition;
+        }
+
+
+
+
     }
 
 }
