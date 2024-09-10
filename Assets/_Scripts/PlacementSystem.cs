@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEditor.Rendering;
 using UnityEngine;
 
@@ -20,6 +21,22 @@ public class PlacementSystem : MonoBehaviour
     public List<GameObject> placedGameobjects = new List<GameObject>();
 
     [SerializeField] private int selectedObjectIndex = -1;
+    [SerializeField] private int driectionObjectIndex = 1;
+    [SerializeField] private Vector3[] driectionRotationList = new Vector3[4]
+    { 
+        new Vector3(0, 0, 0),
+        new Vector3(0, 90f, 0),
+        new Vector3(0, 180f, 0),
+        new Vector3(0, 270f, 0),
+    };
+
+    [SerializeField] private Vector3Int[] driectionPositionList = new Vector3Int[4] {
+        Vector3Int.zero,
+        Vector3Int.zero,
+        Vector3Int.zero,
+        Vector3Int.zero,
+    };
+
     [SerializeField] private Vector3Int lastDetectedPosition = Vector3Int.zero;
 
     [Header("마우스의 포지션")]
@@ -54,9 +71,15 @@ public class PlacementSystem : MonoBehaviour
         // 그리드 이펙트를 켠다.
         gridVisualization.SetActive(true);
 
+        driectionPositionList[0] = new Vector3Int(0, 0, 0);
+        driectionPositionList[1] = new Vector3Int(0, 0, database.objectsData[selectedObjectIndex].Size.y);
+        driectionPositionList[2] = new Vector3Int(database.objectsData[selectedObjectIndex].Size.x, 0, database.objectsData[selectedObjectIndex].Size.y);
+        driectionPositionList[3] = new Vector3Int(database.objectsData[selectedObjectIndex].Size.y, 0, 0);
+
         // 프리뷰 그리기
         preview.StartShowingPlacementPreview(
                 database.objectsData[selectedObjectIndex].Prefab,
+                driectionObjectIndex,
                 database.objectsData[selectedObjectIndex].Size
             );
 

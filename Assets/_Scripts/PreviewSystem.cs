@@ -13,6 +13,8 @@ public class PreviewSystem : MonoBehaviour
     [SerializeField] private Material previewMaterialPrefab;
     [SerializeField] private Material previewMaterialInstance;
 
+    [SerializeField] private int rotationObjectIndex = 1;
+
     private Renderer cellIndicatorRenderer;
 
     private void Start()
@@ -24,8 +26,11 @@ public class PreviewSystem : MonoBehaviour
         cellIndicatorRenderer = cellIndicator.GetComponentInChildren<Renderer>();
     }
 
-    public void StartShowingPlacementPreview(GameObject prefab, Vector2Int size)
+    public void StartShowingPlacementPreview(GameObject prefab, int rotationObjectIndex, Vector2Int size)
     { 
+        this.rotationObjectIndex = rotationObjectIndex;
+        rotationObjectIndex = 1;
+
         // 오브젝트 생성
         previewObject = Instantiate(prefab);
 
@@ -66,6 +71,8 @@ public class PreviewSystem : MonoBehaviour
             position.x,
             position.y + previewYOffset,
             position.z);
+
+
 
         // MoveCursor
         cellIndicator.transform.position = position;
