@@ -7,37 +7,32 @@ using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
 {
+    [Header("마우스 좌표 인디게이터")]
     [SerializeField] GameObject mouseIndicator;
+
+    [Header("마우스 정보 매니저")]
     [SerializeField] private InputManager inputManager;
+
+    [Header("그리드 좌표 정보")]
     [SerializeField] Grid grid;
+
+    [Header("그리드 쉐이더")]
     [SerializeField] private GameObject gridVisualization;
 
+    [Header("오브젝트 데이터")]
     [SerializeField] private ObjectsDatabaseSO database;
+
+    [Header("오브젝트 쉐이더 처리 시스템")]
     [SerializeField] PreviewSystem preview;
 
+    [Header("충돌 처리 오브젝트 좌표 저장 리스트 - 바닥 & 오브젝트")]
     public PlacementDataDic furnitureData, floorData;
 
-
+    [Header("최종 오브젝트 저장 좌표 리스트")]
     public List<GameObject> placedGameobjects = new List<GameObject>();
 
+    [Header("선택 오브젝트 인덱스")]
     [SerializeField] private int selectedObjectIndex = -1;
-    [SerializeField] private int driectionObjectIndex = 1;
-    [SerializeField] private Vector3[] driectionRotationList = new Vector3[4]
-    { 
-        new Vector3(0, 0, 0),
-        new Vector3(0, 90f, 0),
-        new Vector3(0, 180f, 0),
-        new Vector3(0, 270f, 0),
-    };
-
-    [SerializeField] private Vector3Int[] driectionPositionList = new Vector3Int[4] {
-        Vector3Int.zero,
-        Vector3Int.zero,
-        Vector3Int.zero,
-        Vector3Int.zero,
-    };
-
-    [SerializeField] private Vector3Int lastDetectedPosition = Vector3Int.zero;
 
     [Header("마우스의 포지션")]
     [SerializeField] private Vector3 mousePosition;
@@ -45,7 +40,10 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField] private Vector3Int gridPosition;
     [Header("오브젝트 생성되면 그 오브젝트의 포지션")]
     [SerializeField] private Vector3 createObjectPosition;
+    [Header("그리드의 포지션의 마지막 포지션")]
+    [SerializeField] private Vector3Int lastDetectedPosition = Vector3Int.zero;
 
+    [Header("충돌되는 좌표인지 여부")]
     public bool placementValidity;
 
     private void Start()
@@ -55,10 +53,23 @@ public class PlacementSystem : MonoBehaviour
         furnitureData = new PlacementDataDic();
     }
 
+    public void RotationPlacement(int driection) // 방향을 받아서 오브젝트의 위치를 바꿈
+    {
+        // 선택된 오브젝트의 아이디가 기준임
+        if (selectedObjectIndex < 0)
+        {
+            Debug.Log("현재 선택된 오브젝트의 아이디가 없습니다.");
+            return;
+        }
+
+        // 방향 포지션 셋팅
+        preview.SetDriectionData(driection, database.objectsData[selectedObjectIndex].Size);
+    }
+
     // 배치 시작
     public void StartPlacement(int ID)
     {
-        // 현재 선택된 인덱스 넣기
+        // 현재 선택된 오브젝트의 인덱스 넣기
         selectedObjectIndex = database.objectsData.FindIndex(data => data.ID == ID);
 
         // 인덱스가 정상적으로 생성되지 않았다면 (예외 처리)
@@ -71,17 +82,17 @@ public class PlacementSystem : MonoBehaviour
         // 그리드 이펙트를 켠다.
         gridVisualization.SetActive(true);
 
-        driectionPositionList[0] = new Vector3Int(0, 0, 0);
-        driectionPositionList[1] = new Vector3Int(0, 0, database.objectsData[selectedObjectIndex].Size.y);
-        driectionPositionList[2] = new Vector3Int(database.objectsData[selectedObjectIndex].Size.x, 0, database.objectsData[selectedObjectIndex].Size.y);
-        driectionPositionList[3] = new Vector3Int(database.objectsData[selectedObjectIndex].Size.y, 0, 0);
+
+        Debug.Log("StartPlacement = " + database.objectsData[selectedObjectIndex].Size);
+
+        // 사이즈 최신화
+        preview.SetDynamicObjectSize(database.objectsData[selectedObjectIndex].Size);
 
         // 프리뷰 그리기
         preview.StartShowingPlacementPreview(
                 database.objectsData[selectedObjectIndex].Prefab,
-                driectionObjectIndex,
                 database.objectsData[selectedObjectIndex].Size
-            );
+        );
 
         // 마우스 버튼 클릭후에
         inputManager.onClicked += Placestructure;
@@ -102,15 +113,6 @@ public class PlacementSystem : MonoBehaviour
         //생성된 오브젝트의 포지션을 다시 제거함
         createObjectPosition = Vector3.zero;
     }
-
-    /*
-    public void SetObjectRotationment(int id)
-    {
-        StopPlacement();
-        StartPlacement(id);
-    }
-    */
-
 
     // 마우스 클릭후에 
     // 마우스 좌표를 셀 좌표로 변환하여 
@@ -154,6 +156,11 @@ public class PlacementSystem : MonoBehaviour
 
         // 최초 배치 시작에서 선택된 오브젝트 인덱스를 기준으로 오브젝트를 생성 
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
+        
+        //////////
+        /// 최총 배치 데이터에 
+        
+        
         //생성된 오브젝트의 포지션을 그리드 포지션을 가져와서 넣기
         newObject.transform.position = grid.CellToWorld(gridPosition);
         
@@ -168,7 +175,8 @@ public class PlacementSystem : MonoBehaviour
         // 장판인지 오브젝트인지 구분하여 데이터 저장함..
         // 지속적으로 저장하여 나중에 빨간색 프리뷰 이미지가 나올수 있도록
         // 충돌 처리 하기 위해 저장
-        selectedData.AddObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size, database.objectsData[selectedObjectIndex].ID, placedGameobjects.Count - 1);
+        selectedData.AddObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size
+            , database.objectsData[selectedObjectIndex].ID, placedGameobjects.Count - 1, preview.GetDriectionObjectIndex(), preview.GetDynamicObjectSize());
 
         preview.UpdatePosition(grid.CellToWorld(gridPosition), false);
     }
@@ -178,7 +186,7 @@ public class PlacementSystem : MonoBehaviour
     {
         // 장판인지 오브젝트인지 구분
         PlacementDataDic selectData = database.objectsData[selectedObjectIndex].ID == 0? floorData : furnitureData;
-        return selectData.CanPlaceObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size);
+        return selectData.CanPlaceObjectAt(gridPosition, database.objectsData[selectedObjectIndex].Size, preview.GetDriectionObjectIndex(), preview.GetDynamicObjectSize());
     }
 
 

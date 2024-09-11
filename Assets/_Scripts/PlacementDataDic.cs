@@ -11,16 +11,17 @@ public class PlacementDataDic
     public SerializedDictionary<Vector3Int, PlacementData> PlacementDataDictionary;
 
     // 데이터 저장
-    public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int iD, int placedObjectIndex) // 현재 생성 포지션, 오브젝트의 사이즈, 오브젝트의 아이디, 생성 리스트의 아이디 
+    public void AddObjectAt(Vector3Int gridPosition, Vector2Int objectSize, int iD, int placedObjectIndex, int driectionIndex, Vector2Int dynamicObjectSize) // 현재 생성 포지션, 오브젝트의 사이즈, 오브젝트의 아이디, 생성 리스트의 아이디 
     {
         // 우선 계산해서 사이즈 만큼에 백터 리스트를 구함
-        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize);
+        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, objectSize, driectionIndex, dynamicObjectSize);
 
         PlacementData data = new PlacementData(positionToOccupy, iD, placedObjectIndex);
 
         // 저장시 예외 처리
         foreach (var pos in positionToOccupy)
         {
+
             if (PlacementDataDictionary.ContainsKey(pos))
             {
                 throw new Exception("중복 입니다.");
@@ -31,9 +32,11 @@ public class PlacementDataDic
     }
 
     // 오브젝트에 전체 포함된 그리드 좌표 리스트르 구함
-    private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int objectSize)
+    private List<Vector3Int> CalculatePositions(Vector3Int gridPosition, Vector2Int objectSize, int driectionIndex, Vector2Int dynamicObjectSize)
     {
         List<Vector3Int> returnVal = new List<Vector3Int>();
+
+        objectSize = dynamicObjectSize;
 
         // 현재점을 기준으로 데이터에 넣음
         // 사이즈를 포함하여 전체의 그리드 리스트를 구함
@@ -48,9 +51,9 @@ public class PlacementDataDic
     }
 
     // 배치가 가능한지 판단
-    public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int size)
+    public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int size, int driectionIndex, Vector2Int dynamicObjectSize)
     {
-        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, size);
+        List<Vector3Int> positionToOccupy = CalculatePositions(gridPosition, size, driectionIndex, dynamicObjectSize);
 
         // 배치시 가능 여부
         foreach (var pos in positionToOccupy)
