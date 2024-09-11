@@ -40,6 +40,8 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField] private Vector3Int gridPosition;
     [Header("오브젝트 생성되면 그 오브젝트의 포지션")]
     [SerializeField] private Vector3 createObjectPosition;
+    [Header("오브젝트 생성되면 그 오브젝트의 회전값")]
+    [SerializeField] private Vector3 createObjectRotation;
     [Header("그리드의 포지션의 마지막 포지션")]
     [SerializeField] private Vector3Int lastDetectedPosition = Vector3Int.zero;
 
@@ -69,6 +71,8 @@ public class PlacementSystem : MonoBehaviour
     // 배치 시작
     public void StartPlacement(int ID)
     {
+        StopPlacement();
+
         // 현재 선택된 오브젝트의 인덱스 넣기
         selectedObjectIndex = database.objectsData.FindIndex(data => data.ID == ID);
 
@@ -87,6 +91,8 @@ public class PlacementSystem : MonoBehaviour
 
         // 사이즈 최신화
         preview.SetDynamicObjectSize(database.objectsData[selectedObjectIndex].Size);
+        // 방향 포지션 다시 셋팅
+        preview.SetDriectionData(preview.GetDriectionObjectIndex(), database.objectsData[selectedObjectIndex].Size);
 
         // 프리뷰 그리기
         preview.StartShowingPlacementPreview(
@@ -112,6 +118,8 @@ public class PlacementSystem : MonoBehaviour
 
         //생성된 오브젝트의 포지션을 다시 제거함
         createObjectPosition = Vector3.zero;
+        //생성된 오브젝트의 회전값을 다시 제거함
+        createObjectRotation = Vector3.zero;
     }
 
     // 마우스 클릭후에 
@@ -156,18 +164,29 @@ public class PlacementSystem : MonoBehaviour
 
         // 최초 배치 시작에서 선택된 오브젝트 인덱스를 기준으로 오브젝트를 생성 
         GameObject newObject = Instantiate(database.objectsData[selectedObjectIndex].Prefab);
-        
+
         //////////
-        /// 최총 배치 데이터에 
-        
-        
+        /// 최종 배치 데이터에 회전부분 넣기 시작
+        /// 기존 데이터에서 회전시 진행되는 회전 포지션 값과 회전에 로테이션 Y 값을 추가하여 
+        /// 최종 배치 데이터에 넣기 
+        //////////
+
         //생성된 오브젝트의 포지션을 그리드 포지션을 가져와서 넣기
-        newObject.transform.position = grid.CellToWorld(gridPosition);
+        //newObject.transform.position = grid.CellToWorld(gridPosition);
         
+        newObject.transform.position = grid.CellToWorld(gridPosition) + preview.GetDriectionPosition(preview.GetDriectionObjectIndex());
+        newObject.transform.eulerAngles = preview.GetDritectionRotation(preview.GetDriectionObjectIndex());
+
         //생성된 오브젝트 리스트에 저장하여 관리
         placedGameobjects.Add(newObject);
         //생성된 오브젝트의 포지션을 우선 저장함 
         createObjectPosition = newObject.transform.position;
+        createObjectRotation = newObject.transform.eulerAngles;
+
+        //////////
+        /// 최종 배치 데이터에 회전부분 넣기 종료
+        //////////
+
 
         // 장판인지 오브젝트인지 구분 
         PlacementDataDic selectedData = database.objectsData[selectedObjectIndex].ID == 0 ? floorData : furnitureData;

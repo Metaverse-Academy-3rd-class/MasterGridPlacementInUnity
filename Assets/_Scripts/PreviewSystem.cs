@@ -132,8 +132,21 @@ public class PreviewSystem : MonoBehaviour
         return dynamicObjectSize;
     }
 
+    public Vector3Int GetDriectionPosition(int driectionObjectIndex)
+    {
+        return driectionPositionList[driectionObjectIndex];
+    }
+
+    public Vector3 GetDritectionRotation(int driectionObjectIndex) 
+    {
+        return driectionRotationList[driectionObjectIndex];
+    }
+
+
     public void StopShowingPreview()
     {
+
+
         cellIndicator.SetActive(false);
         Destroy(previewObject);
     }
