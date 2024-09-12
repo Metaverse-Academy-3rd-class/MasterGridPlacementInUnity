@@ -50,6 +50,8 @@ public class PlacementDataDic
         return returnVal;
     }
 
+  
+
     // 배치가 가능한지 판단
     public bool CanPlaceObjectAt(Vector3Int gridPosition, Vector2Int size, int driectionIndex, Vector2Int dynamicObjectSize)
     {

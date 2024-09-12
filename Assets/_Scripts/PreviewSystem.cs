@@ -142,11 +142,13 @@ public class PreviewSystem : MonoBehaviour
         return driectionRotationList[driectionObjectIndex];
     }
 
+    public Vector3 GetPreviewObjectPosition()
+    {
+        return previewObject.transform.position;
+    }
 
     public void StopShowingPreview()
     {
-
-
         cellIndicator.SetActive(false);
         Destroy(previewObject);
     }

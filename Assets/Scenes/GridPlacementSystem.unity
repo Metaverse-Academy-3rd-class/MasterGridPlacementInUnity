@@ -1340,6 +1340,8 @@ MonoBehaviour:
   gridVisualization: {fileID: 495176179}
   database: {fileID: 11400000, guid: 33ca4916be1797842aa1385bf7d59be5, type: 2}
   preview: {fileID: 1929645183}
+  currentState: 0
+  previewObjectPosition: {x: 0, y: 0, z: 0}
   furnitureData:
     PlacementDataDictionary:
       _serializedList: []
@@ -1351,8 +1353,10 @@ MonoBehaviour:
   mousePosition: {x: 0, y: 0, z: 0}
   gridPosition: {x: 0, y: 0, z: 0}
   createObjectPosition: {x: 0, y: 0, z: 0}
+  createObjectRotation: {x: 0, y: 0, z: 0}
   lastDetectedPosition: {x: 0, y: 0, z: 0}
   placementValidity: 0
+  lastGridPosition: {x: 4, y: -5}
 --- !u!224 &1022566861 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6175041104697196024, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
@@ -2873,7 +2877,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7897775575725484003, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7897775575725484003, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -2882,14 +2886,14 @@ PrefabInstance:
     - target: {fileID: 7897775575725484003, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1017557451}
     - target: {fileID: 7897775575725484003, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7897775575725484003, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: StartRemoving
+      value: StopPlacement
       objectReference: {fileID: 0}
     - target: {fileID: 7897775575725484003, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
