@@ -2,6 +2,7 @@ using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 [System.Serializable]
@@ -36,6 +37,17 @@ public class PlacementDataDic
     {
         List<Vector3Int> returnVal = new List<Vector3Int>();
 
+
+        Debug.Log("CalculatePositions gridPosition = " + gridPosition); 
+        Debug.Log("CalculatePositions dynamicObjectSize = " + dynamicObjectSize);
+
+
+        if (dynamicObjectSize.x != dynamicObjectSize.y && (driectionIndex == 1 || driectionIndex == 3))
+        {
+            //float offSet = 
+            gridPosition = new Vector3Int(gridPosition.x, 0, gridPosition.z - (dynamicObjectSize.x + (dynamicObjectSize.y - 2) - ((dynamicObjectSize.x - 1) * 2)));
+        }
+
         objectSize = dynamicObjectSize;
 
         // 현재점을 기준으로 데이터에 넣음
@@ -45,8 +57,13 @@ public class PlacementDataDic
             for (int y = 0; y < objectSize.y; y++)
             {
                 returnVal.Add(gridPosition + new Vector3Int(x, 0, y));
+
+                Debug.Log($"CalculatePositions returnVal ({x},{y}) = ({returnVal[x].x}, {returnVal[x].z})");
             }
         }
+
+
+
         return returnVal;
     }
 

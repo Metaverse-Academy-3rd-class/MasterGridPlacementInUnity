@@ -1356,7 +1356,6 @@ MonoBehaviour:
   createObjectRotation: {x: 0, y: 0, z: 0}
   lastDetectedPosition: {x: 0, y: 0, z: 0}
   placementValidity: 0
-  lastGridPosition: {x: 4, y: -5}
 --- !u!224 &1022566861 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6175041104697196024, guid: 8ece0f0faf8317849a46eacc430a72b1, type: 3}
